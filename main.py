@@ -17,6 +17,9 @@ class Game:
         p = Platform((0, HEIGHT - 50), (WIDTH, 50))
         self.all_sprites.add(p)
         self.platforms.add(p)
+        p = Platform((50, 240), (100, 20))
+        self.all_sprites.add(p)
+        self.platforms.add(p)
         self.run()
 
     def run(self):
@@ -32,16 +35,17 @@ class Game:
             if event.type == pg.QUIT:
                 self.running = False
                 if self.playing:self.playing = False
-
+            if event.type == pg.KEYUP:
+                if event.key == pg.K_UP:
+                    self.player.standing = True
     def update(self):
         self.all_sprites.update()
         hits = pg.sprite.spritecollide(self.player, self.platforms, False)
         if hits:
-            self.player.standing = True
-            self.player.vel.y = 0
-            self.player.rect.bottom = hits[0].rect.top - 1
-            self.player.pos = self.player.rect.center
-
+            if vec(self.player.rect.center).y < vec(hits[0].rect.center).y:
+                self.player.vel.y = 0
+                self.player.rect.bottom = hits[0].rect.top - 1
+                self.player.pos = self.player.rect.center
     def draw(self):
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
